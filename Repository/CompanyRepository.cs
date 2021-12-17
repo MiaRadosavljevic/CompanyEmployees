@@ -16,8 +16,15 @@ namespace Repository
         public void CreateCompany(Company company) =>
             Create(company);
 
+        public void DeleteCompany(Company company) =>
+            Delete(company);
+
         public IEnumerable<Company> GetAllCompanies(bool trackChanges) => 
             FindAll(trackChanges).OrderBy(c => c.Name).ToList();
+
+        public IEnumerable<Company> GetByIds(IEnumerable<Guid> ids, bool trackChanges) =>
+            FindByCondition(c => ids.Contains(c.Id), trackChanges);
+
         public Company GetCompany(Guid id, bool trackChanges) =>
             FindByCondition(c => c.Id.Equals(id), trackChanges).SingleOrDefault();
     }
