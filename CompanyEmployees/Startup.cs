@@ -33,8 +33,9 @@ namespace CompanyEmployees
             services.AddControllers(opt => {
                 opt.RespectBrowserAcceptHeader = true;
                 opt.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters()
-            .AddCustomCSVFormatter();
+            }).AddNewtonsoftJson()
+                .AddXmlDataContractSerializerFormatters()
+                .AddCustomCSVFormatter();
             
             services.ConfigureCors();
             services.ConfigureIISIntegration();
@@ -42,6 +43,9 @@ namespace CompanyEmployees
             services.ConfigureSqlContext(Configuration);
             services.ConfigureRepositoryManager();
             services.AddAutoMapper(typeof(Startup));
+
+            services.Configure<ApiBehaviorOptions>(opts => opts.SuppressModelStateInvalidFilter = true);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CompanyEmployees", Version = "v1" });

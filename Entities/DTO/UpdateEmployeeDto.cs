@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Entities.DTO
 {
-    public class CreateEmployeeDto : ManipulatingEmployeeDto
+    public  class UpdateEmployeeDto : ManipulatingEmployeeDto
     {
-
+        
     }
 }
