@@ -1,4 +1,5 @@
 ﻿using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,13 +20,13 @@ namespace Repository
         public void DeleteCompany(Company company) =>
             Delete(company);
 
-        public IEnumerable<Company> GetAllCompanies(bool trackChanges) => 
-            FindAll(trackChanges).OrderBy(c => c.Name).ToList();
+        public async Task<IEnumerable<Company>> GetAllCompanies(bool trackChanges) => 
+            await FindAll(trackChanges).OrderBy(c => c.Name).ToListAsync();
 
-        public IEnumerable<Company> GetByIds(IEnumerable<Guid> ids, bool trackChanges) =>
-            FindByCondition(c => ids.Contains(c.Id), trackChanges);
+        public async Task<IEnumerable<Company>> GetByIds(IEnumerable<Guid> ids, bool trackChanges) =>
+            await FindByCondition(c => ids.Contains(c.Id), trackChanges).ToListAsync();
 
-        public Company GetCompany(Guid id, bool trackChanges) =>
-            FindByCondition(c => c.Id.Equals(id), trackChanges).SingleOrDefault();
+        public async Task<Company> GetCompany(Guid id, bool trackChanges) =>
+            await FindByCondition(c => c.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
     }
 }
