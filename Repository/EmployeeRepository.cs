@@ -1,5 +1,7 @@
 ﻿using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +25,19 @@ namespace Repository
             Delete(employee);
         public async Task<Employee> GetEmployee(Guid companyId, Guid id, bool trackChanges) =>
             await FindByCondition(c => c.CompanyId.Equals(companyId) && c.Id.Equals(id), trackChanges).SingleOrDefaultAsync();
-        public async Task<IEnumerable<Employee>> GetEmployees(Guid companyId, bool trackChanges) =>
-            await FindByCondition(c => c.CompanyId.Equals(companyId), trackChanges).OrderBy(e => e.Name).ToListAsync();
+        public async Task<PagedList<Employee>> GetEmployees(Guid companyId, EmployeeParameters employeeParameters, bool trackChanges)
+        {
+            var employees = await FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
+                .FilterEmployees(employeeParameters.MinAge,employeeParameters.MaxAge)
+                .Search(employeeParameters.SearchTerm)
+                .Sort(employeeParameters.OrderBy)
+                .ToListAsync();
+            return PagedList<Employee>.ToPagedList(employees, employeeParameters.PageNumber, employeeParameters.PageSize);
+        }
+        //=>
+        //    await FindByCondition(c => c.CompanyId.Equals(companyId), trackChanges).OrderBy(e => e.Name)
+        //        .Skip((employeeParameters.PageNumber - 1) * employeeParameters.PageSize)
+        //        .Take(employeeParameters.PageSize)
+        //        .ToListAsync();
     }
 }
