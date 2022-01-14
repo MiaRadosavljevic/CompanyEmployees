@@ -37,6 +37,7 @@ namespace CompanyEmployees
             services.AddControllers(opt => {
                 opt.RespectBrowserAcceptHeader = true;
                 opt.ReturnHttpNotAcceptable = true;
+                opt.CacheProfiles.Add("120SecondDuration", new CacheProfile { Duration = 120 });
             }).AddNewtonsoftJson()
                 .AddXmlDataContractSerializerFormatters()
                 .AddCustomCSVFormatter();
@@ -58,6 +59,11 @@ namespace CompanyEmployees
             services.AddScoped<ValidateMediaTypeAttribute>();
 
             services.AddScoped<EmployeeLinks>();
+
+            services.ConfigureVersioning();
+
+            services.ConfigureResponseCaching();
+            services.ConfigureHttpCacheHeaders();
 
             services.Configure<ApiBehaviorOptions>(opts => opts.SuppressModelStateInvalidFilter = true);
 
@@ -89,7 +95,10 @@ namespace CompanyEmployees
             app.UseForwardedHeaders(new ForwardedHeadersOptions 
             { 
                 ForwardedHeaders = ForwardedHeaders.All 
-            }); 
+            });
+
+            app.UseResponseCaching();
+            app.UseHttpCacheHeaders();
 
             app.UseRouting();
 
