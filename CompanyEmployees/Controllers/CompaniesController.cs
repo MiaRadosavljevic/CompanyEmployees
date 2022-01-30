@@ -5,6 +5,7 @@ using Contracts;
 using Entities.DTO;
 using Entities.Models;
 using Marvin.Cache.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -29,7 +30,7 @@ namespace CompanyEmployees.Controllers
             _logger = logger;
             _mapper = mapper;
         }
-        [HttpGet]
+        [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await _repository.Company.GetAllCompanies(trackChanges: false);

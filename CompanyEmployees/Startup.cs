@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using CompanyEmployees.ActionFilters;
 using CompanyEmployees.Extensions;
 using CompanyEmployees.Utility;
@@ -65,6 +66,15 @@ namespace CompanyEmployees
             services.ConfigureResponseCaching();
             services.ConfigureHttpCacheHeaders();
 
+            services.AddMemoryCache();
+            services.ConfigureRateLimitingOptions();
+            services.AddHttpContextAccessor();
+
+            services.AddAuthentication();
+            services.ConfigureIdentity();
+            services.ConfigureJWT(Configuration);
+            services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+
             services.Configure<ApiBehaviorOptions>(opts => opts.SuppressModelStateInvalidFilter = true);
 
             services.AddSwaggerGen(c =>
@@ -97,8 +107,13 @@ namespace CompanyEmployees
                 ForwardedHeaders = ForwardedHeaders.All 
             });
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseResponseCaching();
             app.UseHttpCacheHeaders();
+
+            app.UseIpRateLimiting();
 
             app.UseRouting();
 
