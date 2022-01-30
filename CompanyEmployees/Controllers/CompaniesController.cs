@@ -18,6 +18,7 @@ namespace CompanyEmployees.Controllers
     [ApiVersion("1.0")]
     [Route("api/companies/")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     //[ResponseCache(CacheProfileName ="120SecondDuration")]
     public class CompaniesController : ControllerBase
     {
@@ -30,6 +31,10 @@ namespace CompanyEmployees.Controllers
             _logger = logger;
             _mapper = mapper;
         }
+        /// <summary>
+        /// Gets the list of all companies
+        /// </summary>
+        /// <returns>The companies list</returns>
         [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies()
         {
